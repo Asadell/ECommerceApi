@@ -19,6 +19,11 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Slug, opt => opt.MapFrom(src => GenerateSlug(src.Name)))
             .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.UtcNow));
             // .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
+        CreateMap<Order, OrderDto>();
+        CreateMap<Order, OrderListDto>()
+            .ForMember(dest => dest.ItemCount, opt => opt.MapFrom(src => src.OrderItems.Count));
+        CreateMap<OrderItem, OrderItemDto>();
     }
 
     private string GenerateSlug(string text)
