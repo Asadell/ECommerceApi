@@ -1,4 +1,5 @@
 using AutoMapper;
+using ECommerceApi.DTOs;
 using ECommerceApi.Models;
 
 namespace ECommerceApi.Helpers;
@@ -7,6 +8,8 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
+        CreateMap<User, UserDto>();
+        
         CreateMap<Product, ProductDto>();
         CreateMap<CreateProductDto, Product>()
             .ForMember(dest => dest.Slug, opt => opt.MapFrom(src => GenerateSlug(src.Name)));

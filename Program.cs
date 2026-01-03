@@ -1,6 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using ECommerceApi.Data;
 using ECommerceApi.Services;
+using ECommerceApi.Helpers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +20,37 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddAutoMapper(typeof(Program));
 
+// jwt
+var jwtSettingsSection = builder.Configuration.GetSection("JwtSettings");
+var secretKey =  jwtSettingsSection["Secret"] ?? throw new InvalidOperationException("JWT Secret is not configured");
+
+builder.Services.Configure<JwtSettings>(jwtSettingsSection);
+
+// Add Authentication
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettingsSection["Issuer"],
+        ValidAudience = jwtSettingsSection["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+    };
+});
+
+builder.Services.AddAuthorization();
+
+// services
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IJwtHelper, JwtHelper>();
 builder.Services.AddScoped<IProductService, ProductService>();
 
 var app = builder.Build();
