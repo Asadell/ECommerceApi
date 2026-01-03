@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ECommerceApi.Data;
+using ECommerceApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         .UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
         .UseSnakeCaseNamingConvention()
 );
+
+builder.Services.AddAutoMapper(typeof(Program));
+
+builder.Services.AddScoped<IProductService, ProductService>();
 
 var app = builder.Build();
 
