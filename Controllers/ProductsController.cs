@@ -51,7 +51,7 @@ public class ProductsController : ControllerBase
     }
 
     // POST: api/products
-    // [Authorize]
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<ActionResult<ProductDto>> CreateProduct([FromBody] CreateProductDto createProductDto)
     {
@@ -70,6 +70,7 @@ public class ProductsController : ControllerBase
     }
 
     // PUT: api/products/{id}
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateProduct(int id, UpdateProductDto updateProductDto)
     {
@@ -84,6 +85,7 @@ public class ProductsController : ControllerBase
     }
 
     // DELETE: api/products/{id}
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProduct(int id)
     {
@@ -98,6 +100,7 @@ public class ProductsController : ControllerBase
     }
 
     // PATCH: api/products/{id}/stock
+    [Authorize(Roles = "Admin")]
     [HttpPatch("{id}/stock")]
     public async Task<IActionResult> UpdateStock(int id, [FromBody] int quantity)
     {
